@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: marvin
+  namespace: marvin
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: marvin-hubot
+    spec:
+      containers:
+        - name: marvin-hubot
+          image: domingusj/marvin-hubot:0.0.2
+          imagePullPolicy: Always
+          env:
+          - name: HUBOT_ADAPTER
+            value: "slack"
+          - name: REDIS_URL
+            value: "redis://localhost:6379"
+          - name: HUBOT_SLACK_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: slack-token
+                key: slack-token
+        - name: redis
+          image: redis
+          ports:
+          - containerPort: 6379
